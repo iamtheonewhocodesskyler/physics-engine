@@ -1,0 +1,8 @@
+[package]
+name = "physics-kinda-engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+vector_derive = { path = "vector_derive" }
+traits_p = { path = "traits_p"}
