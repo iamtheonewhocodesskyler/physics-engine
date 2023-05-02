@@ -1,8 +1,14 @@
+use std::fmt::Formatter;
+
 use traits_p::{Vector, Scalar};
 use vector_derive::{vectorify, scalarify};
 
-pub trait Energy {}
+
+trait Energy {}
 trait ForceTrait {}
+
+#[scalarify]
+struct Mass {}
 
 #[vectorify]
 struct Acceleration {}
@@ -27,7 +33,17 @@ struct Object <'a> {
     volume: f64,
     forces: Vec<&'a dyn ForceTrait>,
     momentum: Momentum,
-    velocity: Velocity
+    velocity: Velocity,
+    kinetic_energy: KineticEnergy,
+    potential_energy: dyn PotentialEnergy
+}
+
+
+
+impl Mass {
+    fn create_mass(mass: f64) -> Self {
+        Mass { magnitude: mass }
+    }
 }
 
 #[vectorify]
@@ -36,16 +52,31 @@ struct Force {}
 impl ForceTrait for Force {}
 
 impl  Force {
-    fn new(acceleration: Acceleration, mass: f64) -> Self {
-        let mag = acceleration.magnitude * mass;
+    fn new(acceleration: Acceleration, mass: Mass) -> Self {
+        let mag = acceleration.magnitude * mass.magnitude;
         Force {magnitude: mag, angle: acceleration.angle}
     }
 }
 
-fn main() {
-    let new_accel = Acceleration { magnitude: 10.0, angle: 10.0};
-    let first = Force::new(new_accel, 100.0);
 
-    println!("Magnitude: {} Newtons\nAngle: {} Degrees\nX-direction: {} Newtons\ny-direction: {} Newtons", first.get_magnitude(), first.get_angle(), first.get_x_component(), first.get_y_component())
+impl Momentum {
+    fn standard(mass: Mass, velocity: Velocity) -> Self {
+        Momentum { magnitude: mass.magnitude*velocity.magnitude , angle: velocity.angle }
+    }
+}
+
+impl KineticEnergy {
+    fn new(mass: Mass, velocity: Velocity) -> Self {
+        KineticEnergy { magnitude: mass.magnitude*velocity.magnitude.powi(2)/2.0 }
+        
+    }
+}
+
+fn main() {
+    let new_mass = Mass::create_mass(100.0);
+    let new_accel = Acceleration { magnitude: 10.0, angle: 10.0};
+    let first = Force::new(new_accel, new_mass);
+
+    println!("{:#?}", first)
 
 }

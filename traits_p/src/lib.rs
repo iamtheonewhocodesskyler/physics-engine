@@ -8,3 +8,5 @@ pub trait Vector {
 pub trait Scalar {
     fn get_magnitude(&self) -> f64;
 }
+
+pub trait UnitDisplay {}

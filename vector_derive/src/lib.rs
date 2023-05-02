@@ -1,6 +1,6 @@
 use proc_macro::*;
 
-use syn::{parse_macro_input, ItemStruct, parse::Parser, Fields, Field};
+use syn::{parse_macro_input, ItemStruct, parse::Parser, Fields, Field, punctuated::Punctuated};
 use ::quote::quote;
 
 //TODO: create traits in traits_p lib folder and implement with the macro
@@ -43,6 +43,7 @@ pub fn vectorify(_: TokenStream, input: TokenStream) -> TokenStream {
     let name = &ast.ident;
 
     quote! {
+        #[derive(Debug)]
         #ast
 
         impl Vector for #name {
